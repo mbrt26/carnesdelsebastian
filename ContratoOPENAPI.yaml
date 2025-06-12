@@ -1,0 +1,336 @@
+openapi: 3.0.1
+info:
+  title: API de Carnes del Sebastián – Fase 1
+  version: 1.0.0
+  description: |
+    Contrato OpenAPI para los servicios de Fase 1:
+    1) Órdenes de Producción  
+    2) Control de Calidad  
+    3) Control de Inventarios por Bodega  
+servers:
+  - url: https://api.carnesdelsebastian.com/v1
+    description: Producción
+  - url: https://dev-api.carnesdelsebastian.com/v1
+    description: Desarrollo
+
+paths:
+  /ordenes:
+    post:
+      summary: Crear una nueva orden de producción
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrdenCreacion'
+      responses:
+        '201':
+          description: Orden creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Orden'
+    get:
+      summary: Listar ordenes de producción
+      parameters:
+        - in: query
+          name: linea
+          schema:
+            type: string
+          description: Línea de negocio (Desposte|Derivados)
+        - in: query
+          name: fecha
+          schema:
+            type: string
+            format: date
+          description: Fecha planificada
+      responses:
+        '200':
+          description: Lista de órdenes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Orden'
+
+  /ordenes/{ordenId}:
+    parameters:
+      - in: path
+        name: ordenId
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Obtener detalles de una orden
+      responses:
+        '200':
+          description: Detalle de la orden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Orden'
+
+  /ordenes/{ordenId}/fichas:
+    post:
+      summary: Registrar un ítem de ficha de trazabilidad
+      parameters:
+        - in: path
+          name: ordenId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FichaCreacion'
+      responses:
+        '201':
+          description: Ítem de ficha registrado
+    get:
+      summary: Listar ítems de ficha de trazabilidad
+      parameters:
+        - in: path
+          name: ordenId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de ítems de ficha
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ficha'
+
+  /qc/programas:
+    get:
+      summary: Listar programas de control de calidad
+      responses:
+        '200':
+          description: Lista de programas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProgramaQC'
+
+  /qc/programas/{programaId}/registros:
+    parameters:
+      - in: path
+        name: programaId
+        required: true
+        schema:
+          type: string
+    post:
+      summary: Registrar un control de calidad
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistroQC'
+      responses:
+        '201':
+          description: Registro de QC creado
+
+  /inventarios/bodegas:
+    get:
+      summary: Listar bodegas
+      responses:
+        '200':
+          description: Lista de bodegas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bodega'
+
+  /inventarios/bodegas/{bodegaId}/stock:
+    parameters:
+      - in: path
+        name: bodegaId
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Obtener stock actual de una bodega
+      responses:
+        '200':
+          description: Stock por artículo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StockItem'
+
+  /inventarios/bodegas/{bodegaId}/movimientos:
+    parameters:
+      - in: path
+        name: bodegaId
+        required: true
+        schema:
+          type: string
+    post:
+      summary: Registrar un movimiento de inventario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovimientoInv'
+      responses:
+        '201':
+          description: Movimiento registrado
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    OrdenCreacion:
+      type: object
+      required:
+        - cliente
+        - linea
+        - fechaPlanificada
+        - cantidadPlanificada
+      properties:
+        cliente:
+          type: string
+        linea:
+          type: string
+          enum: [Desposte, Derivados]
+        turno:
+          type: string
+          enum: [Mañana, Tarde, Noche]
+        fechaPlanificada:
+          type: string
+          format: date
+        cantidadPlanificada:
+          type: integer
+    Orden:
+      allOf:
+        - $ref: '#/components/schemas/OrdenCreacion'
+        - type: object
+          properties:
+            id:
+              type: string
+            estado:
+              type: string
+              enum: [Creada, EnProceso, Finalizada]
+            fechaCreacion:
+              type: string
+              format: date-time
+
+    FichaCreacion:
+      type: object
+      required:
+        - proceso
+        - materialConsumido
+        - cantidad
+      properties:
+        proceso:
+          type: string
+        materialConsumido:
+          type: string
+        cantidad:
+          type: number
+        tiempoProceso:
+          type: number
+          description: Segundos
+        condiciones:
+          type: object
+          description: Temperatura, humedad, presión, etc.
+
+    Ficha:
+      allOf:
+        - $ref: '#/components/schemas/FichaCreacion'
+        - type: object
+          properties:
+            id:
+              type: string
+            ordenId:
+              type: string
+            timestamp:
+              type: string
+              format: date-time
+
+    ProgramaQC:
+      type: object
+      properties:
+        id:
+          type: string
+        nombre:
+          type: string
+        frecuencia:
+          type: string
+          description: e.g. diaria, semanal, por lotes
+
+    RegistroQC:
+      type: object
+      required:
+        - programaId
+        - valores
+      properties:
+        programaId:
+          type: string
+        valores:
+          type: object
+          description: Mapa clave‐valor de mediciones (pH, temperatura, etc.)
+        hallazgos:
+          type: string
+        acciones:
+          type: string
+        fotos:
+          type: array
+          items:
+            type: string
+            format: uri
+
+    Bodega:
+      type: object
+      properties:
+        id:
+          type: string
+        nombre:
+          type: string
+
+    StockItem:
+      type: object
+      properties:
+        articulo:
+          type: string
+        cantidadDisponible:
+          type: number
+        unidad:
+          type: string
+
+    MovimientoInv:
+      type: object
+      required:
+        - articulo
+        - cantidad
+        - tipo
+      properties:
+        articulo:
+          type: string
+        cantidad:
+          type: number
+        tipo:
+          type: string
+          enum: [entrada, salida, ajuste]
+        motivo:
+          type: string
+        referencia:
+          type: string
