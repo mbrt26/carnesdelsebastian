@@ -1,0 +1,168 @@
+# ===============================================
+# REQUIREMENTS.TXT - Sistema Carnes del Sebastián
+# ===============================================
+# Este archivo contiene todas las dependencias necesarias
+# para el sistema integrado de producción, calidad e inventario
+
+# ===============================================
+# DEPENDENCIAS DE PYTHON
+# ===============================================
+# Para scripts de análisis y procesamiento de datos
+
+# Core data processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Excel file handling
+openpyxl>=3.1.0
+xlrd>=2.0.1
+
+# Database connectivity
+psycopg2-binary>=2.9.5
+
+# JSON and file operations
+pathlib2>=2.3.7
+
+# HTTP requests and API clients
+requests>=2.31.0
+
+# Date and time handling
+python-dateutil>=2.8.2
+
+# Configuration management
+python-dotenv>=1.0.0
+
+# Data validation
+pydantic>=2.0.0
+
+# ===============================================
+# DEPENDENCIAS DE NODE.JS (Backend)
+# ===============================================
+# Las siguientes son las dependencias principales del backend
+# Instalar con: npm install
+
+# Framework y middleware
+# express@^4.18.2
+# cors@^2.8.5
+# helmet@^7.0.0
+# http-proxy-middleware@^3.0.5
+
+# Google Cloud Platform
+# @google-cloud/firestore@^7.0.0
+# @google-cloud/pubsub@^4.0.0
+# @google-cloud/storage@^7.0.0
+
+# Autenticación y seguridad
+# bcryptjs@^2.4.3
+# jsonwebtoken@^9.0.0
+
+# Base de datos
+# pg@^8.11.0
+# redis@^4.6.0
+
+# Validación y logging
+# joi@^17.9.2
+# winston@^3.10.0
+
+# Configuración
+# dotenv@^16.3.1
+
+# ===============================================
+# DEPENDENCIAS DE NODE.JS (Frontend React)
+# ===============================================
+# Las siguientes son las dependencias del frontend
+# Instalar con: npm install en frontend/web/
+
+# React y TypeScript
+# react@^19.1.0
+# react-dom@^19.1.0
+# typescript@^4.9.5
+# @types/react@^19.1.8
+# @types/react-dom@^19.1.6
+
+# Material-UI y componentes
+# @mui/material@^7.1.1
+# @mui/icons-material@^7.1.1
+# @emotion/react@^11.14.0
+# @emotion/styled@^11.14.0
+
+# Routing y formularios
+# react-router-dom@^7.6.2
+# react-hook-form@^7.57.0
+# @hookform/resolvers@^5.1.1
+# yup@^1.6.1
+
+# HTTP client y gráficos
+# axios@^1.9.0
+# recharts@^2.15.3
+
+# Utilidades
+# date-fns@^4.1.0
+
+# ===============================================
+# DEPENDENCIAS DE DESARROLLO Y TESTING
+# ===============================================
+
+# Python testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+flake8>=6.0.0
+
+# Para análisis avanzado (opcional)
+# matplotlib>=3.7.0
+# seaborn>=0.12.0
+# plotly>=5.15.0
+
+# ===============================================
+# DEPENDENCIAS DE INFRAESTRUCTURA
+# ===============================================
+
+# Docker y contenedores
+# docker>=6.1.0
+# docker-compose>=1.29.0
+
+# Para scripts de deployment
+pyyaml>=6.0.0
+
+# ===============================================
+# INSTRUCCIONES DE INSTALACIÓN
+# ===============================================
+
+# Para Python:
+# pip install -r requirements.txt
+
+# Para Node.js Backend:
+# cd / && npm install
+
+# Para Node.js Frontend:
+# cd frontend/web && npm install
+
+# Para Docker (desarrollo):
+# docker-compose up --build
+
+# Para producción:
+# npm run build && npm run deploy
+
+# ===============================================
+# VERSIONES DE SISTEMA REQUERIDAS
+# ===============================================
+# Python: >= 3.9
+# Node.js: >= 18.0
+# Docker: >= 20.10
+# PostgreSQL: >= 14.0
+# Redis: >= 7.0
+# Nginx: >= 1.20 (para frontend)
+
+# ===============================================
+# VARIABLES DE ENTORNO REQUERIDAS
+# ===============================================
+# Crear archivo .env con:
+# DATABASE_URL=postgresql://username:password@localhost:5432/carnes_sebastian
+# REDIS_URL=redis://localhost:6379
+# JWT_SECRET=your_jwt_secret_key
+# GOOGLE_CLOUD_PROJECT_ID=your_project_id
+# GOOGLE_APPLICATION_CREDENTIALS=path/to/service-account.json
+# NODE_ENV=development|production
+# PORT=3000
+# REACT_APP_API_URL=http://localhost:3000/api
