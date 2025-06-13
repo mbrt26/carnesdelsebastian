@@ -46,6 +46,30 @@ class OrdenesService {
     const response = await apiClient.get<FichaTrazabilidad[]>(`/api/ordenes/${ordenId}/fichas`);
     return response.data;
   }
+
+  // ==================== INTEGRACIÓN CON DESPOSTE ====================
+
+  // Actualizar estado de la orden basado en registros de Desposte
+  async actualizarEstadoOrdenPorDesposte(ordenId: string): Promise<any> {
+    const response = await apiClient.post(`/api/ordenes/${ordenId}/actualizar-estado-desposte`);
+    return response.data;
+  }
+
+  // Obtener progreso detallado de una orden
+  async obtenerProgresoOrden(ordenId: string): Promise<any> {
+    const response = await apiClient.get(`/api/ordenes/${ordenId}/progreso`);
+    return response.data.data ?? response.data;
+  }
+
+  // Obtener dashboard de progreso de todas las órdenes
+  async obtenerDashboardProgreso(filtros?: { linea?: string; fechaInicio?: string; fechaFin?: string }): Promise<any> {
+    const params = new URLSearchParams();
+    if (filtros?.linea) params.append('linea', filtros.linea);
+    if (filtros?.fechaInicio) params.append('fechaInicio', filtros.fechaInicio);
+    if (filtros?.fechaFin) params.append('fechaFin', filtros.fechaFin);
+    const response = await apiClient.get(`/api/ordenes/dashboard/progreso?${params.toString()}`);
+    return response.data.data ?? response.data;
+  }
 }
 
 export default new OrdenesService();
